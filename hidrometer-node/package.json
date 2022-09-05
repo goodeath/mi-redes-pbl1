@@ -1,0 +1,18 @@
+{
+  "name": "hidrometer-node",
+  "version": "1.0.0",
+  "description": "hidrometer node",
+  "main": "index.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "yarn test"
+  },
+  "author": "Alex Morte",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.0.2"
+  }
+}
