@@ -13,7 +13,7 @@ describe('Hidrometer class', () => {
 		expect(hidrometers[0].get_id() != hidrometers[1].get_id()).toBe(true);
 	});
 
-	it('Flow', () => {
+	it('Consumption', () => {
 		jest.useFakeTimers();
 		const hidrometer = new Hidrometer();
 		const flow_rate = hidrometer.get_flow_rate();
@@ -28,7 +28,32 @@ describe('Hidrometer class', () => {
 		hidrometer.resume_flow();
 		jest.runOnlyPendingTimers();
 		expect(hidrometer.get_consumption()).toBe(3*flow_rate);
+	});
 
+
+	it('Changing Flow', () => {
+		jest.useFakeTimers();
+
+		const hidrometer = new Hidrometer();
+		let flow_rate = hidrometer.get_flow_rate();
+		let consumption = 0;
+
+		expect(hidrometer.get_consumption()).toBe(0);
+		jest.runOnlyPendingTimers();
+		consumption += flow_rate;
+
+		expect(hidrometer.get_consumption()).toBe(consumption);
+		hidrometer.set_flow(flow_rate*3);
+		expect(hidrometer.get_flow_rate()).toBe(flow_rate*3);
+		flow_rate = hidrometer.get_flow_rate();
+		jest.runOnlyPendingTimers();
+		consumption += flow_rate;
+
+		expect(hidrometer.get_consumption()).toBe(consumption);
+		hidrometer.set_flow(0);
+		jest.runOnlyPendingTimers();
+
+		expect(hidrometer.get_consumption()).toBe(consumption);
 	});
 
 });
