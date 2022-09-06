@@ -2,7 +2,7 @@ export class Hidrometer {
 	private id: string;
 	private flow_rate: number = 0;
 	private consumption: number = 0;
-	private control_id: NodeJS.Timer = null;
+	private control_id: NodeJS.Timer | null = null;
 
 	public get_id = ():string => this.id;
 	public get_flow_rate = ():number => this.flow_rate;
@@ -16,11 +16,16 @@ export class Hidrometer {
 	}
 
 	public pause_flow = (): void => {
-		clearInterval(this.control_id);
+		if(this.control_id)
+			clearInterval(this.control_id);
 	}
 
 	public resume_flow = (): void => {
 		this.control_id = setInterval(this.flush_water, 1000);
+	}
+
+	public set_flow = (flow_rate:number): void => {
+		this.flow_rate = flow_rate;
 	}
 
 	private flush_water = (): void => {
