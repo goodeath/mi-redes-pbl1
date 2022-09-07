@@ -24,9 +24,11 @@ export class HttpSocket {
 
 			data = Buffer.concat(chunks);
 			data = data.toString();
+			//console.log(data);
 			const request = this.parse_request(data);
 			if(request.body)
 				request.body = JSON.parse(request.body);
+			//console.log(request.body);
 			const http_response = new HttpResponse();
 			await callback(request, http_response);
 			
@@ -42,14 +44,19 @@ export class HttpSocket {
 	}
 
 	public parse_request = (request: string): HttpRequest => {
-		const pieces = request.split('\n');
+		const dividers = ['\r\n','\r','\n'];
+		let pieces: string[] = [];
+		dividers.forEach( divider => {
+			if(!pieces.length && request.indexOf(divider) != -1)
+				pieces = request.split(divider);
+		})
 		let body_found = false;
 		let body = "";
 		const http_request = new HttpRequest();
 		const [method, url, version] = pieces[0].split(' ');
 		http_request.set_method(method);
 		http_request.set_url(url);
-		pieces.forEach(line => {
+		pieces.forEach((line: string) => {
 			if(body_found) body += line;
 			if(this.is_header(line)){
 				const [k,v] = line.split(":");
