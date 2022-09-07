@@ -19,6 +19,7 @@ export class HttpServer {
 		this.server.create_server(port, async (request: HttpRequest, response: HttpResponse) => {
 			const method = <REQUEST_METHOD>request.get_method().toLowerCase();
 			const url = request.get_url();
+			console.log(`${method.toUpperCase()} - ${url} - ${new Date()}`);
 			let route_response = await this.request(method , url, request, response);
 			if(typeof route_response == 'object') route_response = JSON.stringify(route_response);
 			response.add_header('Content-Type', 'text/json');
