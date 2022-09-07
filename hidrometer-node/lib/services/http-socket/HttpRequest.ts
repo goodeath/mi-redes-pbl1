@@ -14,6 +14,7 @@ export class HttpRequest {
 	public get_body = (): Buffer | null => this._body;
 	public set_body = (body: string): void => {
 		this._body = Buffer.from(body);
+		this.body = body;
 	}
 	public set_method = (method: string): void => {
 		this.method = method;
