@@ -6,7 +6,7 @@ const hidrometer = new Hidrometer();
 const controller = new HidrometerController(hidrometer);
 const server = new HttpServer();
 
-server.post('/configure-flow', (req:any,res:any) => {console.log(req.body)});
+server.post('/configure-flow', controller.configure_flow);
 server.put('/pause-flow', controller.pause_flow);
 server.put('/resume-flow', controller.resume_flow);
 server.get('/details', controller.details);

@@ -6,6 +6,11 @@ export class HidrometerController {
   constructor(hidrometer: Hidrometer){
     this.hidrometer = hidrometer;
   }
+  
+  public configure_flow = async (req: any, res: any) => {
+    const flow = req.body.flow;
+    this.hidrometer.set_flow(flow);
+  } 
 
   public details = async (req: any, res: any) => {
     return {
