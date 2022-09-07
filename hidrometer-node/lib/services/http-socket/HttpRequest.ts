@@ -1,8 +1,9 @@
 export class HttpRequest {
 	private headers: Record<string, string> = {};
-	private body: Buffer;
-	private method: string;
-	private url: string;
+	private _body: Buffer | null = null;
+	private method: string = '';
+	private url: string = '';
+	public body: any;
 
 	public set_header = (header: string, value: string): void => {
 		this.headers[header] = value.trim();
@@ -10,9 +11,9 @@ export class HttpRequest {
 	public get_header = (header: string): string => this.headers[header];
 	public get_method = (): string => this.method;
 	public get_url = (): string => this.url;
-	public get_body = (): Buffer => this.body;
+	public get_body = (): Buffer | null => this._body;
 	public set_body = (body: string): void => {
-		this.body = Buffer.from(body);
+		this._body = Buffer.from(body);
 	}
 	public set_method = (method: string): void => {
 		this.method = method;
