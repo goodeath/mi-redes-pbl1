@@ -17,7 +17,8 @@ export class HttpResponse {
 
 
 	public end = (body: string): HttpResponse => {
-		this.body = body;
+		if(body)
+			this.body = body;
 		return this;
 	}
 
