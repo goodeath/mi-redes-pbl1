@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "@types/node": "^18.7.16"
+  },
+  "dependencies": {
+    "knex": "^2.3.0",
+    "objection": "^3.0.1",
+    "sqlite3": "^5.0.11"
+  }
+}
