@@ -1,8 +1,13 @@
 import { Model } from 'objection';
 
-export class Bill extends Model {
-    public id: number;
-    public bill_id: number;
-    public consumption: number;
-    public date_created: Date;
+export class BillHistory extends Model {
+    public id: number | undefined;
+    public bill_id: number | undefined;
+    public consumption: number | undefined;
+    public date_created: Date | undefined;
+
+
+    static get tableName() {
+        return 'bill_history';
+    }
 }
