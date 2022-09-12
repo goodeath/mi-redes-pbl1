@@ -1,8 +1,12 @@
 import { Model } from 'objection';
 
 export class Bill extends Model {
-    public id: number;
-    public registration_id: string;
-    public date_created: Date;
-    public close: boolean;
+    public id: number | undefined;
+    public registration_id: string | undefined;
+    public date_created: Date | undefined;
+    public closed: boolean | undefined;
+
+    static get tableName() {
+        return 'bill';
+    }
 }
