@@ -10,7 +10,7 @@ export class SocketUdp {
 		this.socket.on('message', (buffer: Buffer, rinfo: udp.RemoteInfo) => {
   	  		//console.log('Data received from client : ' + buffer.toString());
   	  		//console.log('Received %d bytes from %s:%d\n',buffer.length, rinfo.address, rinfo.port);
-  	  		callback(buffer.toString());
+  	  		callback(buffer.toString(), rinfo);
 		});
 
 		this.socket.on('listening', () => {
