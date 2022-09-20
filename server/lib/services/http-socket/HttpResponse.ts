@@ -25,7 +25,7 @@ export class HttpResponse {
 
 	public get_response = (): string => {
 		let response = `HTTP/1.1 ${this.status_code} OK\n`
-		response += `Server: Apache\nKeep-Alive: timeout=2, max=200\nConnection: Keep-Alive\n`;
+		response += `Server: Apache\nConnection: Close\n`;
 		response += `Content-Length: ${this.body.length}\n`;
 		for(const header in this.headers) 
 			response += `${header}: ${this.headers[header]}\n`;
