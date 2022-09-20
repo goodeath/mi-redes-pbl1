@@ -10,10 +10,10 @@ socket.listen(9091, async (data: string, rinfo: udp.RemoteInfo ) => {
     const netinfo = new HidrometerNetinfoRepository();
     const bill_repository = new BillRepository();
     const bill_history_repository = new BillHistoryRepository();
-    const [register_id, consumption, date] = data.split(',').map( (d:string) => d.trim());
+    const [register_id, consumption, date, port] = data.split(',').map( (d:string) => d.trim());
 
 
-    await netinfo.create_or_update(register_id, rinfo.address);
+    await netinfo.create_or_update(register_id, rinfo.address+":"+port);
     let current: Bill | undefined = await bill_repository.find_current(register_id);
     if(!current) current = await bill_repository.open(register_id);
     await bill_history_repository.insert(register_id, +consumption);
