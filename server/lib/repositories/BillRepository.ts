@@ -7,8 +7,14 @@ export class BillRepository {
         this.model = Bill;
     }
 
-    public async close(registration_id: string): Promise<boolean> {
-        const update = this.model.query().where({registration_id}).patch({ closed: true}).count();
+    public async close(registration_id: string): Promise<number> {
+        const update = await this.model.query().where({registration_id}).patch({ closed: true});
+        return update;
+    }
+
+
+    public async pay(registration_id: string): Promise<boolean> {
+        const update = await this.model.query().where({registration_id, closed: true}).patch({ paid: true}).count();
         return !!update;
     }
 
@@ -26,7 +32,16 @@ export class BillRepository {
         return bill;
     }
 
-    public async list(): Promise<Bill[]> {
-        return await this.model.query().where({closed: false});
+
+    public async findById(id:string): Promise<Bill | undefined> {
+        const bill =  await this.model.query().findById(id);
+        return bill;
+    }
+
+    public async list(req?: string): Promise<Bill[]> {
+
+        const q = this.model.query();
+        if(req) q.where({registration_id: req});
+        return await q;
     }
 }
