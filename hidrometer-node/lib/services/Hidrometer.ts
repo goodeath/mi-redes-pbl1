@@ -25,7 +25,7 @@ export class Hidrometer {
 
 	public sync_data = (): void => {
 		if(!this.options) return;
-		const message = Buffer.from(`${this.id}, ${this.consumption}, ${Date.now()}`);
+		const message = Buffer.from(`${this.id}, ${this.consumption}, ${Date.now()}, ${process.env.PORT}`);
 		const udp = new UdpClient();
 		udp.send(message, this.options, (error: Error) => {
 			if(error) console.log('Error in sync data:', error);
