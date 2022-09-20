@@ -2,10 +2,13 @@ import { HttpServer } from './lib/services/http-server/HttpServer';
 import { Hidrometer } from './lib/services/Hidrometer';
 import { HidrometerController } from './lib/controllers/HidrometerController';
 
+const { PORT, SERVER_HOST, SERVER_PORT } = process.env;
+
 const hidrometer = new Hidrometer({
-	host: 'localhost',
-	port: 9091
+	host: SERVER_HOST,
+	port: +SERVER_PORT
 });
+
 const controller = new HidrometerController(hidrometer);
 const server = new HttpServer();
 
@@ -14,4 +17,4 @@ server.put('/pause-flow', controller.pause_flow);
 server.put('/resume-flow', controller.resume_flow);
 server.get('/details', controller.details);
 server.get('/health-check', () => {});
-server.listen(9090);
+server.listen(+PORT);
