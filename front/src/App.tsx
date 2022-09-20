@@ -1,14 +1,17 @@
 import React from 'react';
-import { BillApi } from './Api/BillApi';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BillApi } from './api/BillApi';
+import { PickMode } from './PickMode';
+import { AdminHome } from './views/admin/AdminHome';
+import { Home } from './views/client/Home';
 
 export const App = () => {
-	const listAccounts = async () => {
-		const api = new BillApi();
-		const data = await api.list();
-	}
-	return <div>
-		Hello React App from scratch
-		<button onClick={listAccounts}>Get accounts</button>
-	</div>;	
+	return <BrowserRouter>
+		<Routes>
+			<Route path="/admin/*" element={<AdminHome />}></Route>
+			<Route path="/client/*" element={<Home />}></Route>
+			<Route path="/" element={<PickMode />}></Route>
+		</Routes>
+	</BrowserRouter>
 }
 
