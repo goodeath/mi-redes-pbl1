@@ -5,4 +5,4 @@ COPY . /home/app/
 RUN yarn install
 RUN yarn global add ts-node
 EXPOSE 9090/tcp
-CMD yarn dev
+ENTRYPOINT ["yarn","dev"]
