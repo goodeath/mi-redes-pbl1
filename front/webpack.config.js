@@ -14,7 +14,8 @@ module.exports = {
   // Where to compile the bundle
   // By default the output directory is `dist`
   output: {
-    filename: "bundle.js"
+    filename: "bundle.js",
+    publicPath: '/'
   },
 
   // Supported file loaders
@@ -32,6 +33,6 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js"]
   },
   plugins:[new HtmlWebpackPlugin({
-      template: './public/index.html'
+      template: './public/index.html',
   })]
 };
