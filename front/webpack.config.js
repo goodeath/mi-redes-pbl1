@@ -1,5 +1,6 @@
 "use strict";
 
+var dotenv = require('dotenv')
 const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 var webpack = require('webpack');
@@ -35,9 +36,8 @@ module.exports = {
   },
   plugins:[
     new HtmlWebpackPlugin({template: './public/index.html'}),
-    new webpack.EnvironmentPlugin({'process.env.SERVER_HOST': 'localhost', 'process.env.SERVER_PORT':'9092'}),
-    new webpack.ProvidePlugin({
-      process: 'process/browser'
-    })
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(dotenv.config().parsed)
+  }),
   ]
 };
