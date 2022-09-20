@@ -22,7 +22,8 @@ export class HttpServer {
 			console.log(`${method.toUpperCase()} - ${url} - ${new Date()}`);
 			let route_response = await this.request(method , url, request, response);
 			if(typeof route_response == 'object') route_response = JSON.stringify(route_response);
-			response.add_header('Content-Type', 'text/json');
+			response.add_header('Content-Type', 'application/json');
+			response.add_header('Access-Control-Allow-Origin','*');
 			response.end(route_response);
 		});
 	}
