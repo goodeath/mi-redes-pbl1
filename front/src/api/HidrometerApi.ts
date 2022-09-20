@@ -18,7 +18,7 @@ export class HidrometerApi {
 	public getDetails = async (id: number) => {
 		const remote = await this.getipaddr(id);
 		const ip = remote.data.ip;
-		const response = this.axios.get(`http://${ip}:9090/details`,  {headers:{'Content-Type':"text/plain"}});
+		const response = this.axios.get(`http://${ip}/details`,  {headers:{'Content-Type':"text/plain"}});
 		return response;
 	}
 
@@ -26,7 +26,7 @@ export class HidrometerApi {
 	public configureFlow = async (id: number, flow:number) => {
 		const remote = await this.getipaddr(id);
 		const ip = remote.data.ip;
-		const response = this.axios.post(`http://${ip}:9090/configure-flow`,  {flow}, {headers:{'Content-Type':"text/plain"}});
+		const response = this.axios.post(`http://${ip}/configure-flow`,  {flow}, {headers:{'Content-Type':"text/plain"}});
 		return response;
 	}
 
