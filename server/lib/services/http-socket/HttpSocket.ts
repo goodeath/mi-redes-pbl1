@@ -51,7 +51,6 @@ export class HttpSocket {
 			if(!pieces.length && request.indexOf(divider) != -1)
 				pieces = request.split(divider);
 		})
-		console.log(pieces);
 		let body_found = false;
 		let body = "";
 		const http_request = new HttpRequest();
