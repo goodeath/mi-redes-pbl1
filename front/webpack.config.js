@@ -2,12 +2,13 @@
 
 const path = require("path");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+var webpack = require('webpack');
 
 module.exports = {
   // Set debugging source maps to be "inline" for
   // simplicity and ease of use
   devtool: "inline-source-map",
-
+  
   // The application entry point
   entry: "./src/index.tsx",
 
@@ -32,7 +33,11 @@ module.exports = {
   resolve: {
     extensions: [".ts", ".tsx", ".js"]
   },
-  plugins:[new HtmlWebpackPlugin({
-      template: './public/index.html',
-  })]
+  plugins:[
+    new HtmlWebpackPlugin({template: './public/index.html'}),
+    new webpack.EnvironmentPlugin({'process.env.SERVER_HOST': 'localhost', 'process.env.SERVER_PORT':'9092'}),
+    new webpack.ProvidePlugin({
+      process: 'process/browser'
+    })
+  ]
 };

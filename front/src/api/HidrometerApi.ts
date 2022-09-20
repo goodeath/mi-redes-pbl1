@@ -1,7 +1,9 @@
 import Axios, { AxiosInstance } from 'axios';
+import { CONFIG } from '../config';
 
 export class HidrometerApi {
 	private axios: AxiosInstance;
+	private 
 
 	constructor(){
 		this.axios = Axios.create();
@@ -10,7 +12,7 @@ export class HidrometerApi {
 
 
 	public getipaddr = async (id: number) => {
-		const response = this.axios.get(`http://localhost:9092/hidrometer/ipaddr?registration_id=${id}`);
+		const response = this.axios.get(`http://${CONFIG.HOST}:${CONFIG.PORT}/hidrometer/ipaddr?registration_id=${id}`);
 		return response;
 	}
 
@@ -32,7 +34,7 @@ export class HidrometerApi {
 
 
 	public pay = async (id: number) => {
-		const response = this.axios.post(`http://localhost:9092/accounts/pay`, {registration_id:id}, {headers:{'Content-Type':"text/plain"}});
+		const response = this.axios.post(`http://${CONFIG.HOST}:${CONFIG.PORT}/accounts/pay`, {registration_id:id}, {headers:{'Content-Type':"text/plain"}});
 		return response;
 	}
 }
