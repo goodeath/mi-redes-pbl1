@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "knex": "^2.3.0",
+    "mqtt": "^4.3.7",
     "objection": "^3.0.1",
     "sqlite3": "^5.0.11"
   }
