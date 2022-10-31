@@ -8,27 +8,21 @@ export class Hidrometer {
 	private consumption: number = 0;
 	private control_id: NodeJS.Timer | null = null;
 	private sync_control_id: NodeJS.Timer | undefined;
-	private sync_control_id2: NodeJS.Timer|undefined;
 	private options: UdpOptions | undefined;
 	private mqtt:MqttClient;
-	private subscribe_topic:any
 	
 	public get_id = ():string => this.id;
 	public get_flow_rate = ():number => this.flow_rate;
 	public get_consumption = ():number => this.consumption;
 	
 	constructor(options?: UdpOptions){
-		this.mqtt = new MqttClient();
+		this.mqtt = new MqttClient('172.17.0.2', 1883);
 		this.options = options;
 		const randomness = Math.floor(Math.random()*100000);
 		this.id = String(Date.now()) + String(randomness);
 		this.flow_rate = Math.floor(Math.random()*20);
 		this.control_id = setInterval(this.flush_water, 1000);
 		this.sync_control_id = setInterval(this.sync_data, 5500);
-		
-		this.subscribe_topic = this.sync_subscribe_topic();
-		this.sync_control_id2 = setInterval(this.sync_data_mqtt,5500);
-		// this.view_message_broker();
 	}
 
 
@@ -36,10 +30,11 @@ export class Hidrometer {
 		if(!this.options) return;
 		const message = Buffer.from(`${this.id}, ${this.consumption}, ${Date.now()}, ${process.env.PORT}`);
 		const udp = new UdpClient();
-		udp.send(message, this.options, (error: Error) => {
+		this.mqtt.publish('data', message.toString());
+		/*udp.send(message, this.options, (error: Error) => {
 			if(error) console.log('Error in sync data:', error);
 			this.consumption = 0;
-		});
+		});*/
 	}
 
 	public sync_data_mqtt=():void=>{
