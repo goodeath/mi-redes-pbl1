@@ -31,24 +31,6 @@ export class Hidrometer {
 		const message = Buffer.from(`${this.id}, ${this.consumption}, ${Date.now()}, ${process.env.PORT}`);
 		const udp = new UdpClient();
 		this.mqtt.publish('data', message.toString());
-		/*udp.send(message, this.options, (error: Error) => {
-			if(error) console.log('Error in sync data:', error);
-			this.consumption = 0;
-		});*/
-	}
-
-	public sync_data_mqtt=():void=>{
-		const message = `${this.id}, ${this.consumption}, ${Date.now()}, ${process.env.PORT}`;
-		this.mqtt.publish("flush_water",message);
-	}
-
-	public sync_subscribe_topic = (): void =>{
-		const topic ="send_flush"
-		this.mqtt.subscribe(topic);
-	}
-
-	public view_message_broker = ()=>{
-		this.mqtt.message();
 	}
 
 	public pause_flow = (): void => {
