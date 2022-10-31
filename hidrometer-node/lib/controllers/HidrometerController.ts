@@ -13,11 +13,12 @@ export class HidrometerController {
   } 
 
   public details = async (req: any, res: any) => {
-    return {
-      consumption: this.hidrometer.get_consumption(),
-      flow_rate: this.hidrometer.get_flow_rate(),
-      id: this.hidrometer.get_id()
-    }
+    this.hidrometer.view_message_broker()
+    // return {
+    //   consumption: this.hidrometer.get_consumption(),
+    //   flow_rate: this.hidrometer.get_flow_rate(),
+    //   id: this.hidrometer.get_id()
+    // }
   }
 
   public pause_flow = async (req: any, res: any): Promise<boolean> => {
