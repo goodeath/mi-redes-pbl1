@@ -16,6 +16,18 @@ mqtt.message(async (topic:any, message:any) => {
         const [register_id, consumption, date, port, address] = data.split(',').map( (d:string) => d.trim());
 
 
+        // simula bloqueio consumo
+        if(consumption>100){
+            mqtt.publish("stop", register_id)
+
+            //simula liberação espera 8 segunos
+            setTimeout(()=>{
+                mqtt.publish("restart",register_id)
+            },8000)
+        }
+
+       
+
         await netinfo.create_or_update(register_id, address+":"+port);
         let current: Bill | undefined = await bill_repository.find_current(register_id);
         if(!current) current = await bill_repository.open(register_id);
