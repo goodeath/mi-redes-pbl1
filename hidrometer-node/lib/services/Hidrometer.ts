@@ -20,15 +20,35 @@ export class Hidrometer {
 		const randomness = Math.floor(Math.random()*100000);
 		this.id = String(Date.now()) + String(randomness);
 		this.flow_rate = Math.floor(Math.random()*20);
+		this.mqtt.subscribe(["stop","restart"])
 		this.control_id = setInterval(this.flush_water, 1000);
 		this.sync_control_id = setInterval(this.sync_data, 5500);
+
 	}
 
 
+	
 	public sync_data = (): void => {
 		if(!this.options) return;
 		const message = Buffer.from(`${this.id}, ${this.consumption}, ${Date.now()}, ${process.env.PORT}`);
 		this.mqtt.publish('data', message.toString());
+
+		
+		this.mqtt.message((topic:any,message:any)=>{
+			const data = message.toString();
+			if(topic=='stop'){
+				if(data ==this.id){
+					console.log("Pausando")
+					this.pause_flow();
+				}
+			}else if(topic =="restart"){
+				if(data == this.id){
+					console.log("Retomando");
+					this.set_flow(1)
+					this.resume_flow()
+				}
+			}
+		})
 	}
 
 	public pause_flow = (): void => {
