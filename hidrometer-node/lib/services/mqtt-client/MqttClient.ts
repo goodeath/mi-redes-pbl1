@@ -11,7 +11,7 @@ export class MqttClient {
         })
     }
 
-    public subscribe(topic: string) {
+    public subscribe(topic: string[]) {
         this.client.subscribe(topic, (err) => {
             if (err) console.error("Error: ", err);
             console.log(`Subscribe to topc ${topic}`);
@@ -26,9 +26,9 @@ export class MqttClient {
         })
     }
 
-    public message() {
-        this.client.on("message", (topic: string, payload: any) => {
-            console.log(payload.toString())
+    public message(cb:Function) {
+        this.client.on("message", (topic: string, payload: Buffer) => {
+            cb(topic,payload)
             // return payload.toString()  
         })
     }
