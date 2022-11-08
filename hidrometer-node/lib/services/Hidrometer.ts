@@ -1,6 +1,6 @@
 import { MqttClient } from './mqtt-client/MqttClient';
 import { UdpOptions } from './udp-client/UdpOptions';
-
+import ip from 'ip';
 export class Hidrometer {
 	private id: string;
 	private flow_rate: number = 0;
@@ -27,7 +27,8 @@ export class Hidrometer {
 
 	public sync_data = (): void => {
 		if(!this.options) return;
-		const message = Buffer.from(`${this.id}, ${this.consumption}, ${Date.now()}, ${process.env.PORT}`);
+		const address = ip.address();
+		const message = Buffer.from(`${this.id}, ${this.consumption}, ${Date.now()}, ${process.env.PORT}, ${address}`);
 		this.mqtt.publish('data', message.toString());
 	}
 
