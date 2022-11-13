@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "ip": "^1.1.8",
-    "mqtt": "^4.3.7"
-  },
-  "devDependencies": {
-    "@types/node": "^18.11.8"
-  }
-}
