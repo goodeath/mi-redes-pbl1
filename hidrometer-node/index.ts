@@ -1,12 +1,17 @@
 import { Hidrometer } from './lib/services/Hidrometer';
 import { MqttClient } from './lib/services/mqtt-client/MqttClient';
-import { TOPIC_BLOCK, TOPIC_CONFIGURE } from './lib/services/mqtt-client/Topics';
+import { TOPIC_BLOCK, TOPIC_CONFIGURE, TOPIC_SEND_DETAILS } from './lib/services/mqtt-client/Topics';
 
-const { MQTT_PORT, MQTT_HOST } = process.env;
+let { MQTT_PORT, MQTT_HOST } = process.env;
 
-const mqtt = new MqttClient(MQTT_HOST || '172.17.0.2', +MQTT_PORT || 1883);
+const mqtt = new MqttClient(MQTT_HOST || '172.17.0.2', (MQTT_PORT ? +MQTT_PORT : 0) || 1883);
 
-const hidrometer = new Hidrometer(mqtt);
+const hidrometer = new Hidrometer();
+
+hidrometer.set_sync_data_handle( (message: Buffer): void => {
+	console.log(`Sending message: ${message.toString()}`);
+	mqtt.publish(TOPIC_SEND_DETAILS, message.toString());
+});
 
 mqtt.subscribe(TOPIC_BLOCK, (message: string) => {
 	const data: string[] = JSON.parse(message);
@@ -16,7 +21,11 @@ mqtt.subscribe(TOPIC_BLOCK, (message: string) => {
 		console.log("Blocking this hidrometer");
 		hidrometer.pause_flow();
 	}
-	else hidrometer.resume_flow();
+	else {
+		console.log("Releasing this hidrometer");
+		hidrometer.resume_flow();
+	} 
+		
 })
 
 mqtt.subscribe(TOPIC_CONFIGURE, (message:string) => {
