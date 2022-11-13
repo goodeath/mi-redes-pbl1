@@ -1,22 +1,22 @@
 import { MqttClient } from './mqtt-client/MqttClient';
-import { UdpOptions } from './udp-client/UdpOptions';
-import ip from 'ip';
+import { TOPIC_SEND_DETAILS } from './mqtt-client/Topics';
+const ip = require('ip');
 export class Hidrometer {
 	private id: string;
 	private flow_rate: number = 0;
 	private consumption: number = 0;
 	private control_id: NodeJS.Timer | null = null;
 	private sync_control_id: NodeJS.Timer | undefined;
-	private options: UdpOptions | undefined;
+	
 	private mqtt:MqttClient;
 	
 	public get_id = ():string => this.id;
 	public get_flow_rate = ():number => this.flow_rate;
 	public get_consumption = ():number => this.consumption;
 	
-	constructor(options?: UdpOptions){
-		this.mqtt = new MqttClient('172.17.0.2', 1883);
-		this.options = options;
+	constructor(mqtt?: MqttClient){
+		this.mqtt = mqtt;
+		
 		const randomness = Math.floor(Math.random()*100000);
 		this.id = String(Date.now()) + String(randomness);
 		this.flow_rate = Math.floor(Math.random()*20);
@@ -26,10 +26,10 @@ export class Hidrometer {
 
 
 	public sync_data = (): void => {
-		if(!this.options) return;
+		if(!this.mqtt) return;
 		const address = ip.address();
 		const message = Buffer.from(`${this.id}, ${this.consumption}, ${Date.now()}, ${process.env.PORT}, ${address}`);
-		this.mqtt.publish('data', message.toString());
+		this.mqtt.publish(TOPIC_SEND_DETAILS, message.toString());
 	}
 
 	public pause_flow = (): void => {
