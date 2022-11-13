@@ -30,7 +30,10 @@ export class Hidrometer {
 	public sync_data = (): void => {
 		const address = ip.address();
 		const message = Buffer.from(`${this.id}, ${this.consumption}, ${Date.now()}, ${process.env.PORT}, ${address}`);
-		if(this.sync_data_handle) this.sync_data_handle(message);
+		if(this.sync_data_handle) {
+			this.sync_data_handle(message);
+			this.consumption = 0;
+		}
 	}
 
 	public pause_flow = (): void => {
