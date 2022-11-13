@@ -1,20 +1,28 @@
-import { HttpServer } from './lib/services/http-server/HttpServer';
 import { Hidrometer } from './lib/services/Hidrometer';
-import { HidrometerController } from './lib/controllers/HidrometerController';
+import { MqttClient } from './lib/services/mqtt-client/MqttClient';
+import { TOPIC_BLOCK, TOPIC_CONFIGURE } from './lib/services/mqtt-client/Topics';
 
-const { PORT, SERVER_HOST, SERVER_PORT } = process.env;
+const { MQTT_PORT, MQTT_HOST } = process.env;
 
-const hidrometer = new Hidrometer({
-	host: SERVER_HOST != undefined ? SERVER_HOST : 'localhost',
-	port: SERVER_PORT != undefined ? +SERVER_PORT : 9090
-});
+const mqtt = new MqttClient(MQTT_HOST || '172.17.0.2', +MQTT_PORT || 1883);
 
-const controller = new HidrometerController(hidrometer);
-const server = new HttpServer();
+const hidrometer = new Hidrometer(mqtt);
 
-server.post('/configure-flow', controller.configure_flow);
-server.put('/pause-flow', controller.pause_flow);
-server.put('/resume-flow', controller.resume_flow);
-server.get('/details', controller.details);
-server.get('/health-check', () => {});
-server.listen(PORT != undefined ? +PORT : 9092);
+mqtt.subscribe(TOPIC_BLOCK, (message: string) => {
+	const data: string[] = JSON.parse(message);
+	const id = hidrometer.get_id();
+	const should_block = data.some( data_id => id == data_id);
+	if(should_block) {
+		console.log("Blocking this hidrometer");
+		hidrometer.pause_flow();
+	}
+	else hidrometer.resume_flow();
+})
+
+mqtt.subscribe(TOPIC_CONFIGURE, (message:string) => {
+	const data: number = +message;
+	console.log(`Set flow to ${data}`);
+	hidrometer.set_flow(data);
+})
+
+mqtt.listen();
