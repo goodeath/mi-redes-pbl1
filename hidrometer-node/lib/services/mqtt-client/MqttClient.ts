@@ -1,6 +1,9 @@
 import * as mqtt from 'mqtt';
+
+type MessageCB = (message: string) => void;
 export class MqttClient {
     private client: mqtt.Client;
+    private callback: Record<string, Function>[] = [];
     private ready: boolean = false;
 
     constructor(address: string, port: number) {
@@ -11,8 +14,9 @@ export class MqttClient {
         })
     }
 
-    public subscribe(topic: string) {
+    public subscribe(topic: string, cb: MessageCB) {
         this.client.subscribe(topic, (err) => {
+            this.callback.push({[topic]: cb});
             if (err) console.error("Error: ", err);
             console.log(`Subscribe to topc ${topic}`);
         })
@@ -26,10 +30,10 @@ export class MqttClient {
         })
     }
 
-    public message() {
+    public listen() {
         this.client.on("message", (topic: string, payload: any) => {
-            console.log(payload.toString())
-            // return payload.toString()  
+            if(this.callback[topic]) this.callback[topic](payload);
+            else console.log(`${topic} has not any callback registered`);
         })
     }
 }
