@@ -1,4 +1,5 @@
 export const TOPIC_BLOCK = 'hidrometer/block';
+export const TOPIC_BLOCK_REQUEST = 'hidrometer/block_request';
 export const TOPIC_CONFIGURE = 'hidrometer/configure'
 export const TOPIC_SEND_DETAILS = 'hidrometer/send_details'
 export const TOPIC_TOP_FIVE = 'server/top_five'

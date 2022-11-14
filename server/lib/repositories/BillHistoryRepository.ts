@@ -22,6 +22,8 @@ export class BillHistoryRepository {
     }
 
     public async list(bill_id: number): Promise<BillHistory[]> {
-        return await this.model.query().where({bill_id});
+        const history = await this.model.query().where({bill_id});
+        return history;
+
     }
 }

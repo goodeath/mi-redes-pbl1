@@ -13,6 +13,7 @@ export class ServerController {
 
   public async get_hidrometer_data(message:string){
       const data = message.toString();
+      console.log(`Incoming data: ${message}`);
       const netinfo = new HidrometerNetinfoRepository();
       const bill_repository = new BillRepository();
       const bill_history_repository = new BillHistoryRepository();
@@ -23,7 +24,6 @@ export class ServerController {
       let current: Bill | undefined = await bill_repository.find_current(register_id);
       if(!current) current = await bill_repository.open(register_id);
       await bill_history_repository.insert(register_id, +consumption);
-      console.log(message.toString());
   }
 
   public top_five = async(message: string) => {
@@ -31,13 +31,17 @@ export class ServerController {
   }
 
   public history = async(message: string) => {
-    const bill_id: any = message;
+    console.log(`Getting history to: ${message}`)
+    const bill_id: any = message.toString();
     return {
       consumption: await this.bill_history_repository.list(bill_id),
       bill: await this.bill_repository.findById(bill_id)
     };
   }
 
-
+  public block = async(message: string) => {
+    console.log(`Blocking: ${message}`);
+    return message.toString()
+  }
 
 }
