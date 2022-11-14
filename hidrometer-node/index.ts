@@ -14,7 +14,8 @@ hidrometer.set_sync_data_handle( (message: Buffer): void => {
 });
 
 mqtt.subscribe(TOPIC_BLOCK, (message: string) => {
-	const data: string[] = JSON.parse(message);
+	const data: string[] = JSON.parse(JSON.parse(message.toString()));
+	
 	const id = hidrometer.get_id();
 	const should_block = data.some( data_id => id == data_id);
 	if(should_block) {

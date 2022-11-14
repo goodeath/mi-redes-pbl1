@@ -37,10 +37,14 @@ export class Hidrometer {
 	}
 
 	public pause_flow = (): void => {
-		if(this.control_id)
+		if(this.control_id){
 			clearInterval(this.control_id);
-		if(this.sync_control_id)
+			this.control_id = null;
+		}
+		if(this.sync_control_id) {
 			clearInterval(this.sync_control_id);
+			this.sync_control_id = undefined;
+		}
 	}
 
 	public resume_flow = (): void => {
