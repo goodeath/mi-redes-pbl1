@@ -1,10 +1,9 @@
-/**
- * Central Unit
- */
-
- import { MqttClient } from './lib/services/mqtt-client/MqttClient';
+import { MqttClient } from './lib/services/mqtt-client/MqttClient';
+import { HttpServer } from './lib/services/http-server/HttpServer';
+import { ServerController } from './lib/controllers/ServerController';
+import { TOPIC_BLOCK, TOPIC_FOG_MEAN, TOPIC_HISTORY, TOPIC_TOP_FIVE } from './lib/services/mqtt-client/Topics';
  
- const address = "mqtt://localhost";
+ const address = "172.17.0.3";
  const mqtt = new MqttClient(address, 1883);
 
 type History = {
@@ -14,7 +13,7 @@ type History = {
 
 class MeanHistory {
     private history: History[] = []
-    private const MAX_HISTORY_COUNT = 30;
+    private MAX_HISTORY_COUNT = 30;
 
     public add(data: History){
         const last = this.history.length;
@@ -28,7 +27,7 @@ class MeanHistory {
     }
 
     private compute_mean(current: History, next: History): History {
-        const history:History;
+        let history:History;
         history.total = ((current.total*current.quantity) + (next.total*next.quantity)) / (current.quantity-next.quantity);
         history.quantity = current.quantity - next.quantity;
         return history;
@@ -44,42 +43,41 @@ class MeanHistory {
 }
 
 const mean_history = new MeanHistory();
-//1+2+3 / 3 = 2
-
-//5+7/ 2=  6
-
-
-///6*2 + 2*3 / 5 = 3,
 class CentralUnitMQTT {
-    
+    public history_consumption: any[];
+    private top_five: any = [];
+
+    public calculate_top(data: any[]): void {
+        let top:any[] = this.top_five.concat(data);
+        top = top.sort( (a,b) => a.total - b.total);
+        this.top_five = top.slice(0,5);
+    }
 }
 
+const central_unit = new CentralUnitMQTT();
 
- mqtt.subscribe('mean');
- mqtt.message(async (topic:any, message:any) => {
-     // Process Mean
-     if(topic == 'mean'){
-         const data = message.toString();
-         const json = JSON.parse(data);
-         mean_history.add(json);
-         
-     }
- })
- 
- 
- // Configure http server
- import { HttpServer } from './lib/services/http-server/HttpServer';
- import { ServerController } from './lib/controllers/ServerController';
- 
- 
- const controller = new ServerController();
- const server = new HttpServer();
- 
- server.get('/accounts/history', controller.history);
- server.get('/hidrometer/ipaddr', controller.getIpAddr);
- server.get('/accounts/list', controller.list);
- server.post('/accounts/close', controller.close);
- server.post('/accounts/pay', controller.pay);
- 
- server.listen(9092);
- 
+// Calculate Mean
+mqtt.subscribe(TOPIC_FOG_MEAN, (message: string) => {
+    const data = message.toString();
+    const json = JSON.parse(data);
+    mean_history.add(json);
+    mqtt.publish(TOPIC_BLOCK, mean_history.get_mean().toString())
+});
+
+// Top Consumers
+mqtt.subscribe(TOPIC_TOP_FIVE, (message: string) => {
+    message = JSON.parse(message);
+    central_unit.calculate_top(message as any);
+})
+// Check History
+mqtt.subscribe(TOPIC_HISTORY, (message: string) => {
+    central_unit.history_consumption = JSON.parse(message);
+})
+
+const controller = new ServerController(central_unit);
+const server = new HttpServer();
+
+server.get('/hidrometer/history', controller.history);
+server.get('/hidrometer/top_five', controller.list);
+
+server.listen(9092);
