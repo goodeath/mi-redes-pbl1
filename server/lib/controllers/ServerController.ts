@@ -40,7 +40,7 @@ export class ServerController {
   }
 
   public block = async(message: string) => {
-    console.log(`Mean: ${message}`);
+    console.log(`Checking if need block above mean: ${message}`);
     const mean = parseInt(message.toString());
     const data =  await this.bill_repository.get_above_mean(mean);
     return data;

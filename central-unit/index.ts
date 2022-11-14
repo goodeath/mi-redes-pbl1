@@ -66,7 +66,7 @@ class CentralUnitMQTT {
     }
 
     public refresh_topfive(id: number) {
-        this.mqtt.publish(TOPIC_TOP_FIVE_REQUEST, id.toString());
+        this.mqtt.publish(TOPIC_TOP_FIVE_REQUEST, '');
     }
 }
 
@@ -83,8 +83,8 @@ mqtt.subscribe(TOPIC_FOG_MEAN, (message: string) => {
 
 // Top Consumers
 mqtt.subscribe(TOPIC_TOP_FIVE, (message: string) => {
-    message = JSON.parse(message);
-    central_unit.calculate_top(message as any);
+    let messag:any = JSON.parse(message.toString());
+    central_unit.calculate_top(messag as any);
 })
 // Check History
 mqtt.subscribe(TOPIC_HISTORY, (message: string) => {
