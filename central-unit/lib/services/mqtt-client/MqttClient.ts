@@ -47,6 +47,7 @@ export class MqttClient {
 
     public listen() {
         this.client.on("message", async (topic: string, payload: any) => {
+            console.log("Message",topic);
             if(!this.callback[topic]) {
                 console.log(`${topic} has not any callback registered`);
                 return;
