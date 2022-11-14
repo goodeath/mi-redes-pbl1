@@ -3,7 +3,7 @@ export class MqttClient {
     private client: mqtt.Client;
     private ready: boolean = false;
 
-    constructor(address: string, port: number) {
+    constructor(address: string | undefined, port: string | undefined) {
         this.client = mqtt.connect(`mqtt://${address}`);
         const $this = this;
         this.client.on("connect", function(err) {
