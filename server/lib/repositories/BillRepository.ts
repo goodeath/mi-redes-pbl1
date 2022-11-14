@@ -39,9 +39,8 @@ export class BillRepository {
     }
 
     public async list(req?: string): Promise<Bill[]> {
-
-        const q = this.model.query();
-        if(req) q.where({registration_id: req});
-        return await q;
+        const knex = this.model.knex();
+        const data = await knex.raw(`SELECT b.*, SUM(bh.consumption) FROM bill b INNER JOIN bill_history bh on b.id = bh.bill_id group by b.registration_id ORDER BY SUM(bh.consumption) DESC LIMIT 5`);
+        return await data;
     }
 }
