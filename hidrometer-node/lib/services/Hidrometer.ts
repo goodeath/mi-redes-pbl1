@@ -45,6 +45,7 @@ export class Hidrometer {
 			clearInterval(this.sync_control_id);
 			this.sync_control_id = undefined;
 		}
+		console.log(this);
 	}
 
 	public resume_flow = (): void => {
