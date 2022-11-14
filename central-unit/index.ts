@@ -1,7 +1,7 @@
 import { MqttClient } from './lib/services/mqtt-client/MqttClient';
 import { HttpServer } from './lib/services/http-server/HttpServer';
 import { ServerController } from './lib/controllers/ServerController';
-import { TOPIC_BLOCK, TOPIC_FOG_MEAN, TOPIC_HISTORY, TOPIC_TOP_FIVE, TOPIC_HISTORY_REQUEST, TOPIC_TOP_FIVE_REQUEST  } from './lib/services/mqtt-client/Topics';
+import { TOPIC_BLOCK, TOPIC_FOG_MEAN, TOPIC_HISTORY, TOPIC_TOP_FIVE, TOPIC_HISTORY_REQUEST, TOPIC_TOP_FIVE_REQUEST, TOPIC_BLOCK_REQUEST  } from './lib/services/mqtt-client/Topics';
 
 
 const address = "172.17.0.3";
@@ -18,7 +18,7 @@ class MeanHistory {
 
     public add(data: History){
         const last = this.history.length;
-        const last_record = this.history[last-1];
+        const last_record = !last ? {quantity:0, total:0} : this.history[last-1];
         this.cut_history(this.MAX_HISTORY_COUNT);
         this.history.push(this.compute_mean(last_record, data));
     }
@@ -28,8 +28,8 @@ class MeanHistory {
     }
 
     private compute_mean(current: History, next: History): History {
-        let history:History;
-        history.total = ((current.total*current.quantity) + (next.total*next.quantity)) / (current.quantity-next.quantity);
+        let history:History = {} as any;
+        history.total = ((current.total*current.quantity) + (next.total*next.quantity)) / Math.abs(current.quantity-next.quantity);
         history.quantity = current.quantity - next.quantity;
         return history;
     }
@@ -37,6 +37,7 @@ class MeanHistory {
     private cut_history(limit: number): void {
         if(this.history.length < limit) return ;
         const first = this.history.shift();
+        if(!first) return;  
         first.total = -first.total
         for(let i = 0; i < this.history.length; i++)
             this.history[i] = this.compute_mean(this.history[i], first);
@@ -45,7 +46,7 @@ class MeanHistory {
 
 const mean_history = new MeanHistory();
 class CentralUnitMQTT {
-    public history_consumption: any[];
+    public history_consumption: any[] = [];
     private top_five: any = [];
     public mqtt: MqttClient
 
@@ -75,8 +76,9 @@ const central_unit = new CentralUnitMQTT(mqtt);
 mqtt.subscribe(TOPIC_FOG_MEAN, (message: string) => {
     const data = message.toString();
     const json = JSON.parse(data);
+    console.log(json);
     mean_history.add(json);
-    mqtt.publish(TOPIC_BLOCK, mean_history.get_mean().toString())
+    mqtt.publish(TOPIC_BLOCK_REQUEST, mean_history.get_mean().toString())
 });
 
 // Top Consumers
@@ -89,10 +91,12 @@ mqtt.subscribe(TOPIC_HISTORY, (message: string) => {
     central_unit.history_consumption = JSON.parse(message);
 })
 
+mqtt.listen();
+
 const controller = new ServerController(central_unit);
 const server = new HttpServer();
 
 server.get('/hidrometer/history', controller.history);
 server.get('/hidrometer/top_five', controller.top_five);
 
-server.listen(9092);
+server.listen(11000);
