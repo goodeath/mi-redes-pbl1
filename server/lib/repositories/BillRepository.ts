@@ -46,13 +46,20 @@ export class BillRepository {
 
     public async get_above_mean(mean: number): Promise<Number[]> {
         const knex = this.model.knex();
-        const data = await knex.raw(`SELECT b.*, SUM(bh.consumption) FROM bill b INNER JOIN bill_history bh on b.id = bh.bill_id group by b.registration_id  HAVING SUM(bh.consumption) > ${mean} `);
+        const data = await knex.raw(`SELECT b.*, SUM(bh.consumption) FROM bill b
+        INNER JOIN bill_history bh on b.id = bh.bill_id 
+        WHERE bh.id in (SELECT id from bill_history ORDER BY id DESC LIMIT 30)
+        GROUP BY b.registration_id 
+        HAVING SUM(bh.consumption) > ${mean} `);
         return data.map( (d: any) => d.registration_id);  
     }
 
     public async fog_mean(): Promise<Record<string, number>> {
         const knex = this.model.knex();
-        const data = await knex.raw(`SELECT count(distinct(b.registration_id)) as quantity, AVG(bh.consumption) as total FROM bill b INNER JOIN bill_history bh on b.id = bh.bill_id`);
+        const data = await knex.raw(`SELECT count(distinct(b.registration_id)) as quantity, 
+        SUM(bh.consumption)/count(distinct(b.registration_id)) as total FROM bill b 
+        INNER JOIN bill_history bh on b.id = bh.bill_id
+        WHERE bh.id in (SELECT id from bill_history ORDER BY id DESC LIMIT 30)`);
         return data[0];
     }
 }

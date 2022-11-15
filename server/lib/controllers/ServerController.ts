@@ -4,8 +4,12 @@ export class ServerController {
   private bill_repository: BillRepository;
   private hidrometer_netinfo_repository: HidrometerNetinfoRepository;
   private bill_history_repository: BillHistoryRepository;
+
+  private id: string;
   
   constructor(){
+      const randomness = Math.floor(Math.random()*100000);
+		  this.id = String(Date.now()) + String(randomness);
       this.bill_repository = new BillRepository();
       this.hidrometer_netinfo_repository = new HidrometerNetinfoRepository();
       this.bill_history_repository = new BillHistoryRepository();
@@ -48,8 +52,14 @@ export class ServerController {
 
   public send_mean = async(message: string) => {
     console.log(`Sending mean of the fog`);
-    const data =  await this.bill_repository.fog_mean();
+    const data:any =  await this.bill_repository.fog_mean();
+    data.id = this.id;
     return data;
+  }
+
+  public configure = async(message: string) => {
+    console.log("Sending " + message)
+    return JSON.parse(message.toString());
   }
 
 }
