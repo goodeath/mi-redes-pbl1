@@ -8,3 +8,4 @@ export const TOPIC_HISTORY = 'server/history';
 export const TOPIC_HISTORY_REQUEST = 'server/history_request';
 export const TOPIC_FOG_MEAN = 'server/mean';
 export const TOPIC_FOG_MEAN_REQUEST  = 'server/mean_request';
+export const TOPIC_CONFIGURE_REQUEST = 'hidrometer/configure_request';
