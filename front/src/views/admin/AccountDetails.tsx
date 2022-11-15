@@ -28,7 +28,6 @@ ChartJS.register(
 );
 
 
-
 export const AccountDetails = () => {
 	const params = useParams();
 	const getHistory = async () => {
@@ -82,8 +81,8 @@ export const AccountDetails = () => {
 		getHistory().then( async response => {
 			let data = response.data.consumption;
 			setBill(response.data.bill);
-			const info = await getDetails(response.data.bill.registration_id);
-			setFlow(info.data.flow_rate);
+			//const info = await getDetails(response.data.bill.registration_id);
+			//setFlow(info.data.flow_rate);
 			data = groupBy(data, (d) => {
 				const options = {year: 'numeric', month: 'numeric', day: 'numeric',
 				  hour: 'numeric', ...(dd[filter])};
@@ -133,11 +132,9 @@ export const AccountDetails = () => {
 			<option value="2">Últimos 120 segundos</option>
 		</select>
 		<h4>Status: {bill.closed ? "Fechado" : "Em aberto"} </h4>
-		{bill.closed ? <h4> Pagamento: {bill.paid ? "Pago" : "Pendente"} </h4> : null }
+		{bill?.closed ? <h4> Pagamento: {bill.paid ? "Pago" : "Pendente"} </h4> : null }
 		<h4>Consumo: {consumption*0.003} m³</h4>
 		<h4>Valor: R$ {consumption*0.003*15}</h4>
-		<h4>Vazão: R$ {flow} cm³</h4>
-		{flow == 0 ? <h4>Possível vazamento</h4> : null}
 		<div style={{width:"70%", margin:'0 auto'}}>
 		<Line options={{
   			  responsive: true,
@@ -160,8 +157,6 @@ export const AccountDetails = () => {
 		</div>
 		<input onChange={ (e) => setFlowc(e.target.value) } type="text" placeholder="Vazão" />
 		<button onClick={() => configure(bill.registration_id,+flowc)}>Ajustar Vazão</button>
-		<br />
-		<button disabled={bill.closed} onClick={close}>Fechar conta</button> 
-		<button onClick={() => configure(bill.registration_id, 0)}>Cortar água</button> 
+		
 	</div>;	
 }

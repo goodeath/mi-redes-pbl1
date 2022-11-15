@@ -10,14 +10,15 @@ export const AccountList = () => {
 	}
 	const [accounts, setAccounts] = useState<any[]>([]);
 	useEffect(() => {
-		listAccounts().then( response => {
+		const id = setInterval(() => { listAccounts().then( response => {
 			response.data = response.data.map( data => {
 				data.date_created = new Intl.DateTimeFormat('pt-BR',{year: 'numeric', month: 'numeric', day: 'numeric',
 				  hour: 'numeric', minute: 'numeric', second: 'numeric'}).format(new Date(data.date_created))
 				return data;
 			});
 			setAccounts(response.data);
-		});
+		})}, 3000);
+		return () => clearInterval(id)
 	},[]);
 	return <div>
 		<table>

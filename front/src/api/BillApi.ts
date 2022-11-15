@@ -10,13 +10,13 @@ export class BillApi {
 	}
 
 	public list = async (r?: string) => {
-		const response = this.axios.get(`http://${CONFIG.HOST}:${CONFIG.PORT}/accounts/list`, {params:{r}});
+		const response = this.axios.get(`http://${CONFIG.HOST}:${CONFIG.PORT}/hidrometer/top_five`, {params:{r}});
 		return response;
 	}
 
 
 	public history = async (id: number) => {
-		const response = this.axios.get(`http://${CONFIG.HOST}:${CONFIG.PORT}/accounts/history?bill_id=${id}`);
+		const response = this.axios.get(`http://${CONFIG.HOST}:${CONFIG.PORT}/hidrometer/history?bill_id=${id}`);
 		return response;
 	}
 

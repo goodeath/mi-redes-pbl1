@@ -24,11 +24,10 @@ export class HidrometerApi {
 		return response;
 	}
 
+ 
 
 	public configureFlow = async (id: number, flow:number) => {
-		const remote = await this.getipaddr(id);
-		const ip = remote.data.ip;
-		const response = this.axios.post(`http://${ip}/configure-flow`,  {flow}, {headers:{'Content-Type':"text/plain"}});
+		const response = this.axios.post(`http://${CONFIG.HOST}:${CONFIG.PORT}/hidrometer/configure`,  {id, flow}, {headers:{'Content-Type':"text/plain"}});
 		return response;
 	}
 

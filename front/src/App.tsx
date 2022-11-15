@@ -7,9 +7,7 @@ import { Home } from './views/client/Home';
 export const App = () => {
 	return <BrowserRouter>
 		<Routes>
-			<Route path="/admin/*" element={<AdminHome />}></Route>
-			<Route path="/client/*" element={<Home />}></Route>
-			<Route path="/" element={<PickMode />}></Route>
+			<Route path="/*" element={<AdminHome />}></Route>
 		</Routes>
 	</BrowserRouter>
 }
