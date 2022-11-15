@@ -37,20 +37,22 @@ export class Hidrometer {
 	}
 
 	public pause_flow = (): void => {
+
 		if(this.control_id){
-			clearInterval(this.control_id);
+			clearInterval(this.control_id[Symbol.toPrimitive]());
 			this.control_id = null;
 		}
 		if(this.sync_control_id) {
-			clearInterval(this.sync_control_id);
+			clearInterval(this.sync_control_id[Symbol.toPrimitive]());
 			this.sync_control_id = undefined;
 		}
-		console.log(this);
 	}
 
 	public resume_flow = (): void => {
-		this.control_id = setInterval(this.flush_water, 1000);
-		this.sync_control_id = setInterval(this.sync_data, 1000);
+		if(!this.control_id)
+			this.control_id = setInterval(this.flush_water, 1000);
+		if(!this.sync_control_id)
+			this.sync_control_id = setInterval(this.sync_data, 1000);
 	}
 
 	public set_flow = (flow_rate:number): void => {
