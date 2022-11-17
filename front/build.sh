@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t goodeath/hidrometer-front:v1.0.0 .
+docker build -t goodeath/hidrometer-front:v1.0.1 .

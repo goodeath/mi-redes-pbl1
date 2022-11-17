@@ -19,17 +19,20 @@ const [,,service] = process.argv;
 
 const controller = new ServerController();
 
+let { MQTT_HIDROMETER_HOST, MQTT_CENTRAL_HOST } = process.env;
+
+
 if(service == 'hidrometer'){
     // Hidrometer
-    const address = "172.17.0.2";
+    const address = MQTT_HIDROMETER_HOST || "172.17.0.2";
     const mqtt = new MqttClient(address, 1883);
     mqtt.subscribe(TOPIC_SEND_DETAILS, controller.get_hidrometer_data);
     mqtt.listen()
 } else if(service == 'cpu') {
-    const address = "172.17.0.2";
+    const address = MQTT_HIDROMETER_HOST || "172.17.0.2";
     const mqtt = new MqttClient(address, 1883);
 
-    const address2 = "172.17.0.3";
+    const address2 =  MQTT_CENTRAL_HOST || "172.17.0.3";
     const mqtt2 = new MqttClient(address2, 1883)
     // Central Unit
     mqtt2.subscribe(TOPIC_HISTORY_REQUEST, controller.history, TOPIC_HISTORY);

@@ -1,11 +1,12 @@
 import { MqttClient } from './lib/services/mqtt-client/MqttClient';
 import { HttpServer } from './lib/services/http-server/HttpServer';
 import { ServerController } from './lib/controllers/ServerController';
-import { TOPIC_BLOCK, TOPIC_FOG_MEAN, TOPIC_HISTORY, TOPIC_TOP_FIVE, TOPIC_HISTORY_REQUEST, TOPIC_TOP_FIVE_REQUEST, TOPIC_BLOCK_REQUEST, TOPIC_CONFIGURE_REQUEST  } from './lib/services/mqtt-client/Topics';
-import { TOPIC_FOG_MEAN_REQUEST } from '../server/lib/services/mqtt-client/Topics';
+import { TOPIC_BLOCK, TOPIC_FOG_MEAN, TOPIC_HISTORY, TOPIC_TOP_FIVE, TOPIC_HISTORY_REQUEST, TOPIC_FOG_MEAN_REQUEST, TOPIC_TOP_FIVE_REQUEST, TOPIC_BLOCK_REQUEST, TOPIC_CONFIGURE_REQUEST  } from './lib/services/mqtt-client/Topics';
 
 
-const address = "172.17.0.3";
+let { MQTT_HOST } = process.env;
+
+const address = MQTT_HOST || "172.17.0.3";
 const mqtt = new MqttClient(address, 1883);
 
 type History = {
